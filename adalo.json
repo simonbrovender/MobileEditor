@@ -1,14 +1,14 @@
 {
-  "displayName": "MomentoEditor",
+  "displayName": "Mobile Editor",
   "components": [
     {
-      "name": "Editor",
-      "manifest": "./src/components/Editor/manifest.json"
+      "name": "MobileEditor",
+      "manifest": "./src/components/MobileEditor/manifest.json"
     }
   ],
-  "author": "Momento", 
-  "description": "A custom text input editor for Adalo.", 
+  "author": "Momento",
+  "description": "A custom text input editor for Adalo.",
   "logo": "./example-logo.png",
-  "demoAppURL": "UPDATE THIS LATER",
+  "demoAppURL": "https://previewer.adalo.com/a75d7512-3815-42f9-81d8-d78503887c14",
   "supportURL": "UPDATE THIS LATER"
 }
