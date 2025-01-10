@@ -13,6 +13,15 @@ import TextStyle from '@tiptap/extension-text-style';
 import Color from '@tiptap/extension-color';
 import { FaSave } from 'react-icons/fa';
 
+const addMetaTag = () => {
+  const meta = document.createElement('meta');
+  meta.name = 'viewport';
+  meta.content = 'width=device-width, initial-scale=1.0';
+  document.head.appendChild(meta);
+};
+
+addMetaTag();
+
 const uploadToCloudinary = async (base64String) => {
 	try {
 	  console.log("Uploading Base64 to Cloudinary..."); // Debugging log
@@ -255,16 +264,16 @@ const uploadToCloudinary = async (base64String) => {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    position: 'sticky', // Make the toolbar sticky
-    top: '10px', // Stick to the top of the viewport
+    position: 'fixed', // Use fixed positioning for better mobile support
+    top: '0px', // Stick to the top of the viewport
     zIndex: '1000', // Ensure it stays above other content
     backgroundColor: '#DAE0FF', // Prevent content from showing through
-    padding: '15px 20px', // Add some spacing for aesthetic
+    padding: '10px 15px', // Adjust padding for smaller screens
     border: 'none', // Optional: Visual separation from the editor
-	borderRadius: '70px', // Add 8px border radius for rounded corners
-	width: 'calc(100% - 40px)', // Make the width 20px narrower than the input field
-	margin: '0 auto', // Center the toolbar horizontally
-    marginBottom: '20px',
+    borderRadius: '8px', // Slightly reduced radius for mobile
+    width: '100%', // Adjust for full-width toolbar on mobile
+    margin: '0', // Remove auto centering
+    marginBottom: '10px', // Reduced margin
   }}
 >
   {/* Left Side Buttons */}
@@ -545,23 +554,25 @@ const uploadToCloudinary = async (base64String) => {
   </div>
 </div>
 
-      <div
-        ref={editorRef}
-        onClick={() => editor.chain().focus().run()}
-        style={{
-          minHeight: '1140px',
-          padding: '12%',
-          border: '1px solid #ddd',
-          borderRadius: '4px',
-          fontFamily: 'Arial, sans-serif',
-          fontSize: '14px',
-          lineHeight: '1.5',
-          boxSizing: 'border-box',
-          overflowY: 'hidden',
-          cursor: 'text',
-          backgroundColor: '#ffffff',
-        }}
-      >
+<div
+  ref={editorRef}
+  onClick={() => editor.chain().focus().run()}
+  style={{
+    minHeight: '300px',
+    padding: '5%',
+    marginTop: '60px', // Pushes the editor content below the toolbar
+    border: '1px solid #ddd',
+    borderRadius: '4px',
+    fontFamily: 'Arial, sans-serif',
+    fontSize: '12px',
+    lineHeight: '1.5',
+    boxSizing: 'border-box',
+    overflowY: 'hidden',
+    cursor: 'text',
+    backgroundColor: '#ffffff',
+  }}
+>
+
         <EditorContent
 			editor={editor}
 			style={{
