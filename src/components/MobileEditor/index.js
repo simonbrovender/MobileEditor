@@ -354,21 +354,30 @@ const uploadToCloudinary = async (base64String) => {
   {/* Save Button */}
   <button
 	onClick={async () => {
-		const currentContent = editor.getHTML(); // Get the current content as an HTML string
+    const mobileContent = editor.getHTML(); // Get the current content as mobile version
 	
-		// Remove image tags from the HTML before extracting plain text
-		const contentWithoutImages = currentContent.replace(/<img[^>]*>/g, ""); // Remove all <img> tags
-		const plainTextContent = contentWithoutImages.replace(/<[^>]+>/g, ""); // Remove all remaining HTML tags
-	
-		// Extract all image URLs from the original content
-		const imageUrlRegex = /<img[^>]+src=["']([^"']+)["']/g;
-		let match;
-		const imageUrls = [];
-	
-		// Collect all image URLs into an array
-		while ((match = imageUrlRegex.exec(currentContent)) !== null) {
-		imageUrls.push(match[1]);
-		}
+    // Generate the desktop version by updating image widths to 2.14x the mobile widths
+    const desktopContent = mobileContent.replace(/<img([^>]+)style=["']([^"']+)["']/g, (match, imgAttributes, style) => {
+      const updatedStyle = style.replace(/width:\s?([\d.]+)px;/, (widthMatch, widthPx) => {
+        const desktopWidth = parseFloat(widthPx) * 2.14; // Multiply by 2.14 for desktop version
+        return `width: ${desktopWidth.toFixed(2)}px;`;
+      });
+      return `<img${imgAttributes} style="${updatedStyle}"`; // Reconstruct the <img> tag
+    });
+
+    // Remove image tags from the HTML before extracting plain text
+    const contentWithoutImages = mobileContent.replace(/<img[^>]*>/g, ""); // Remove all <img> tags
+    const plainTextContent = contentWithoutImages.replace(/<[^>]+>/g, ""); // Remove all remaining HTML tags
+
+    // Extract all image URLs from the original content
+    const imageUrlRegex = /<img[^>]+src=["']([^"']+)["']/g;
+    let match;
+    const imageUrls = [];
+
+    // Collect all image URLs into an array
+    while ((match = imageUrlRegex.exec(mobileContent)) !== null) {
+      imageUrls.push(match[1]);
+    }
 	
 		// Assocaite tags with new entry
     const tagsInput = tags || ""; // Use the `tags` prop or default to an empty string
@@ -385,7 +394,8 @@ const uploadToCloudinary = async (base64String) => {
     const currentEntryTitle = entryTitle || "Untitled Entry"; // Use the Entry Title prop or a fallback value
 		const entryBody = {
 			fields: {
-			  "Formatted Text": currentContent, // Full HTML content
+        "Formatted Text (Mobile)": mobileContent, // Save mobile version
+        "Formatted Text (Desktop)": desktopContent, // Save desktop version
 			  "Plain Text": plainTextContent, // Clean plain text without images or formatting
 			  "Entry Title": currentEntryTitle, // Use the Entry Title prop from Adalo
 			  "User ID": userId, // Adalo User ID
@@ -395,7 +405,6 @@ const uploadToCloudinary = async (base64String) => {
 			},
 		  };
 		  
-	
 		try {
 		// Save the entry to the Entries table
 		const entryResponse = await fetch(entriesUrl, {
